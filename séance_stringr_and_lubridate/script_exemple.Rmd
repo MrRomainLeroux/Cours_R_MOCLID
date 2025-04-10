@@ -1,0 +1,120 @@
+
+```{r}
+# Chargement des bibliothèques nécessaires
+library(nycflights13)  # Pour accéder aux données sur les vols
+library(dplyr)         # Pour la manipulation des données
+library(stringr)       # Pour la manipulation des chaînes de caractères
+library(purrr)         # Pour les opérations sur des listes (non utilisé ici mais chargé)
+library(lubridate)     # Pour la manipulation des dates et heures
+library(tidyr)     
+
+# Définir les jours fériés pour 2013 (pour vérifier si un vol se produit un jour férié)
+holiday_dates = ymd(c("2013-01-01", "2013-07-04", "2013-12-25"))
+
+# Fonction pour gérer la durée jusqu'au vol suivant
+# Cette fonction calcule la durée entre l'heure de départ du vol actuel et celle du vol suivant
+calculate_time_until_next_flight = function(dep_datetime) {
+  lead_dep = lead(dep_datetime)  # Récupère la date et heure de départ du vol suivant
+  ifelse(!is.na(lead_dep),  # Si le vol suivant existe
+         as.numeric(lead_dep - dep_datetime),  # Calcule la différence en minutes
+         NA_real_)  # Sinon retourne NA
+}
+
+# Fonction pour ajuster l'étiquette du trimestre
+# Cette fonction prend un numéro de trimestre (1 à 4) et renvoie un libellé comme "T1", "T2", etc.
+get_quarter_label = function(quarter) {
+  case_when(  # Utilisation de case_when pour gérer les valeurs possibles
+    quarter == 1 ~ "T1",  # Si trimestre = 1, retourne "T1"
+    quarter == 2 ~ "T2",  # Si trimestre = 2, retourne "T2"
+    quarter == 3 ~ "T3",  # Si trimestre = 3, retourne "T3"
+    TRUE ~ "T4"  # Si trimestre = 4 ou une autre valeur, retourne "T4"
+  )
+}
+
+# Traitement des données de vols
+flights_processed = flights %>%
+  
+  # Filtrage des vols partant de JFK
+  filter(origin == "JFK") %>%  # Ne garde que les vols au départ de JFK
+  
+  # Gestion des valeurs manquantes
+  drop_na(dep_time, arr_time, carrier, year, month, day) %>%  # Supprime les lignes avec des NA dans les colonnes critiques
+  
+  # Manipulations de chaînes de caractères avec stringr
+  mutate(
+    carrier_upper = str_to_upper(carrier),  # Convertit le code du transporteur en majuscules
+    carrier_lower = str_to_lower(carrier),  # Convertit le code du transporteur en minuscules
+    contains_AA = str_detect(carrier, "AA"),  # Vérifie si le code du transporteur contient "AA"
+    carrier_replace = str_replace(carrier, "AA", "American Airlines"),  # Remplace "AA" par "American Airlines"
+    route = str_c(origin, "-", dest),  # Crée une colonne combinant l'origine et la destination du vol
+    carrier_first_letter = str_sub(carrier, 1, 1),  # Extrait la première lettre du code du transporteur
+    carrier_match = str_extract(carrier, "[A-Za-z]{2}"),  # Extrait les 2 premières lettres du code du transporteur
+    cleaned_route = str_squish(route),  # Supprime les espaces superflus dans la route
+    contains_digit_in_route = str_detect(route, "\\d"),  # Vérifie si la route contient un chiffre
+    carrier_padded = str_pad(carrier, 5, side = "both", pad = "-")  # Ajoute des tirets autour du code du transporteur
+  ) %>%
+  
+  # Séparation de la route en colonnes distinctes pour l'origine et la destination
+  mutate(
+    route_origin = str_split_fixed(route, "-", 2)[,1],  # Extrait l'origine de la route
+    route_dest = str_split_fixed(route, "-", 2)[,2]  # Extrait la destination de la route
+  ) %>%
+  
+  # Manipulations des dates et heures avec lubridate
+  mutate(
+    dep_datetime = make_datetime(year, month, day, dep_time %/% 100, dep_time %% 100),  # Crée la date et l'heure de départ
+    arr_datetime = make_datetime(year, month, day, arr_time %/% 100, arr_time %% 100),  # Crée la date et l'heure d'arrivée
+    dep_date = as_date(dep_datetime),  # Crée une colonne avec la date de départ sans l'heure
+    flight_duration = as.numeric(difftime(arr_datetime, dep_datetime, units = "mins")),  # Durée du vol en minutes
+    dep_year = year(dep_datetime),  # Année du départ
+    dep_month = month(dep_datetime, label = TRUE, abbr = FALSE),  # Mois du départ sous forme de nom complet
+    dep_day = day(dep_datetime),  # Jour du mois du départ
+    dep_wday = wday(dep_datetime, label = TRUE, week_start = 1),  # Jour de la semaine (lundi = 1)
+    dep_hour = hour(dep_datetime),  # Heure de départ
+    dep_minute = minute(dep_datetime),  # Minute de départ
+    dep_quarter = quarter(dep_datetime),  # Trimestre de l'année (1 à 4)
+    dep_quarter_label = get_quarter_label(dep_quarter),  # Ajouter l'étiquette du trimestre
+    dep_datetime_floor_hour = floor_date(dep_datetime, "hour"),  # Arrondir à l'heure inférieure
+    dep_datetime_ceiling_hour = ceiling_date(dep_datetime, "hour"),  # Arrondir à l'heure supérieure
+    dep_datetime_round_hour = round_date(dep_datetime, "hour"),  # Arrondir à l'heure la plus proche
+    dep_datetime_plus_3days = dep_datetime + days(3),  # Ajouter 3 jours à la date de départ
+    dep_datetime_minus_2weeks = dep_datetime - weeks(2),  # Soustraire 2 semaines à la date de départ
+    dep_datetime_next_monday = dep_datetime + weeks(1) - days(wday(dep_datetime) - 2),  # Calcul du prochain lundi
+    flight_duration_period = as.period(dminutes(flight_duration)),  # Conversion de la durée en période
+    flight_duration_duration = dminutes(flight_duration),  # Conversion de la durée en objet "durée"
+    flight_interval = interval(dep_datetime, arr_datetime),  # Intervalle entre le départ et l'arrivée
+    is_overnight = arr_datetime > (dep_datetime + days(1)),  # Vérifie si le vol dure plus de 24 heures
+    is_holiday = dep_date %in% holiday_dates,  # Vérifie si le vol part un jour férié
+    is_weekend = dep_wday %in% c("Sat", "Sun"),  # Vérifie si le vol part un week-end
+    time_of_day = case_when(  # Catégorise l'heure de départ en périodes de la journée
+      dep_hour < 6 ~ "Nuit",  # Avant 6h, c'est la nuit
+      dep_hour < 12 ~ "Matin",  # Avant 12h, c'est le matin
+      dep_hour < 18 ~ "Après-midi",  # Avant 18h, c'est l'après-midi
+      TRUE ~ "Soir"  # Sinon, c'est le soir
+    ),
+    time_until_next_flight = calculate_time_until_next_flight(dep_datetime),  # Durée jusqu'au vol suivant
+    plane_age = 2013 - year  # Âge de l'avion (calculé par rapport à l'année de fabrication)
+  ) %>%
+  
+  # Filtrage des vols partant entre 6h et 22h et excluant les week-ends
+  filter(
+    dep_hour >= 6 & dep_hour < 22,  # Vols partant entre 6h et 22h
+    !is_weekend  # Exclure les week-ends
+  ) %>%
+  
+  # Sélection des colonnes à conserver
+  select(
+    flight, carrier, carrier_upper, carrier_lower, carrier_replace,
+    route, route_origin, route_dest, cleaned_route,
+    dep_datetime, arr_datetime, flight_duration,
+    dep_month, dep_wday, time_of_day, is_holiday, is_weekend, is_overnight,
+    plane_age, time_until_next_flight,
+    starts_with("dep_datetime_"), ends_with("duration")  # Garde toutes les colonnes liées aux dates/horaires
+  )
+
+# Visualisation des résultats après transformations
+glimpse(flights_processed)
+
+```
+
+

@@ -1,0 +1,308 @@
+---
+title: "Cours R - packages lubridate"
+output: 
+  html_document:
+    css: "styles.css"
+date: "2025-04-10"
+---
+
+```{r, include=FALSE, eval=TRUE, results='asis'}
+library(lubridate)    
+```
+
+Le package `lubridate` facilite la manipulation des dates et des heures en R. Il permet une conversion simple et rapide entre différents formats de dates et d'heures, ainsi 
+que l'extraction et la modification de leurs composants.
+
+### Fonctions de conversion des chaînes de caractères en dates/horaires
+
+- **`ymd()`** : Convertit une chaîne en date, au format "YYYY-MM-DD".
+- **`mdy()`** : Convertit une chaîne en date, au format "MM-DD-YYYY".
+- **`dmy()`** : Convertit une chaîne en date, au format "DD-MM-YYYY".
+- **`ymd_hms()`** : Convertit une chaîne en date et heure, au format "YYYY-MM-DD HH:MM:SS".
+- **`mdy_hms()`** : Convertit une chaîne en date et heure, au format "MM-DD-YYYY HH:MM:SS".
+- **`dmy_hms()`** : Convertit une chaîne en date et heure, au format "DD-MM-YYYY HH:MM:SS".
+- **`ymd_hm()`** : Convertit une chaîne en date et heure (sans secondes), au format "YYYY-MM-DD HH:MM".
+- **`mdy_hm()`** : Convertit une chaîne en date et heure (sans secondes), au format "MM-DD-YYYY HH:MM".
+- **`dmy_hm()`** : Convertit une chaîne en date et heure (sans secondes), au format "DD-MM-YYYY HH:MM".
+- **`now()`** : Renvoie la date et l'heure actuelles.
+- **`today()`** : Renvoie la date d'aujourd'hui sans l'heure.
+
+### Fonctions pour extraire et manipuler des composants de dates
+
+- **`year()`** : Renvoie l'année d'une date.
+- **`month()`** : Renvoie le mois d'une date (de 1 à 12).
+- **`day()`** : Renvoie le jour du mois d'une date.
+- **`hour()`** : Renvoie l'heure d'une date.
+- **`minute()`** : Renvoie les minutes d'une date.
+- **`second()`** : Renvoie les secondes d'une date.
+- **`wday()`** : Renvoie le jour de la semaine (1 = dimanche, 7 = samedi).
+- **`yday()`** : Renvoie le jour de l'année (1 à 365/366).
+- **`week()`** : Renvoie la semaine de l'année.
+- **`quarter()`** : Renvoie le trimestre de l'année.
+
+### Manipulation de dates et heures
+
+- **`add_with_rollback()`** : Ajoute une durée à une date, en ajustant pour les dépassements (par exemple, mois de février).
+- **`rollback()`** : Ajuste la date pour qu'elle tombe sur un jour spécifique (par exemple, dernier jour du mois).
+- **`floor_date()`** : Arrondit une date au début de l'unité spécifiée (par exemple, au début du mois).
+- **`ceiling_date()`** : Arrondit une date à la fin de l'unité spécifiée (par exemple, à la fin de l'année).
+- **`round_date()`** : Arrondit une date au jour le plus proche.
+
+### Calcul des différences entre dates
+
+- **`interval()`** : Crée un objet de type "intervalle" entre deux dates.
+- **`difftime()`** : Calcule la différence entre deux dates ou heures.
+- **`time_length()`** : Calcule la longueur d'un intervalle en unités spécifiées (ex : jours, mois, années).
+- **`period()`** : Crée une période spécifiée (ex : 3 mois, 1 jour).
+- **`duration()`** : Crée une durée, un nombre fixe de secondes.
+
+### Fonctions de formatage et de conversion
+
+- **`format()`** : Formate une date en chaîne selon un format spécifique.
+- **`strptime()`** : Convertit une chaîne en date en fonction d'un format spécifié.
+- **`as_datetime()`** : Renvoie la date et l'heure sous forme de chaîne au format "YYYY-MM-DD HH:MM:SS".
+
+### Autres utilitaires
+
+- **`is.Date()`** : Vérifie si un objet est une date.
+- **`is.period()`** : Vérifie si un objet est une période (ex : durée).
+
+## Conversion depuis différents formats
+
+```{r, include=TRUE, eval=TRUE, results='asis'}
+ymd("2023-04-07", tz="Europe/Paris")       # Format Année-Mois-Jour
+mdy("04-07-2023")       # Format Mois-Jour-Année 
+dmy("07-04-2023")       # Format Jour-Mois-Année
+
+# Avec heures
+ymd_hms("2023-04-07 14:30:00")  # Avec secondes
+ymd_hm("2023-04-07 14:30")      # Sans secondes
+dmy_hms("07-04-2023 14:30:00")  # Format européen avec heures
+```
+
+## Extraction de composants de la date
+
+```{r, include=TRUE, eval=TRUE, results='asis'}
+date_exemple = ymd_hms("2023-04-07 14:30:45")
+year(date_exemple)    # Année (2023)
+month(date_exemple)   # Mois (4)
+day(date_exemple)     # Jour (7)
+hour(date_exemple)    # Heure (14)
+minute(date_exemple)  # Minute (30)
+second(date_exemple)  # Seconde (45)
+
+# Autres fonctions utiles
+wday(date_exemple)    # Jour de semaine (6 = vendredi)
+yday(date_exemple)    # Jour de l'année (97)
+quarter(date_exemple) # Trimestre (2)
+```
+
+## Récupérer la date et l'heure actuelle
+
+```{r, include=TRUE, eval=TRUE, results='asis'}
+current_datetime = now()
+print(current_datetime)  # Affiche la date et l'heure actuelles
+today()
+```
+
+## Conversion en date et datetime
+
+```{r, include=TRUE, eval=TRUE, results='asis'}
+current_date = today()
+as_date(current_date)
+```
+
+```{r, include=TRUE, eval=TRUE, results='asis'}
+date_val = as_date("2023-04-07")
+print(date_val)  # Affiche "2023-04-07"
+```
+
+```{r, include=TRUE, eval=TRUE, results='asis'}
+datetime_val = as_datetime("2023-04-07 14:30:00")
+print(datetime_val)  # Affiche "2023-04-07 14:30:00"
+seconds()
+```
+
+## Création d'objets de durée
+
+```{r, include=TRUE, eval=TRUE, results='asis'}
+duration_in_seconds = seconds(120)  # 120 secondes
+print(duration_in_seconds)  # Affiche "120 secs"
+
+duration_in_minutes = minutes(10)  # 10 minutes
+print(duration_in_minutes)  # Affiche "10 mins"
+
+duration_in_hours = hours(5)  # 5 heures
+print(duration_in_hours)  # Affiche "5 hours"
+
+duration_in_days = days(3)  # 3 jours
+print(duration_in_days)  # Affiche "3 days"
+
+duration_in_weeks = weeks(2)  # 2 semaines
+print(duration_in_weeks)  # Affiche "2 weeks"
+
+duration_in_months = months(4)  # 4 mois
+print(duration_in_months)  # Affiche "4 months"
+
+duration_in_years = years(1)  # 1 an
+print(duration_in_years)  # Affiche "1 year"
+```
+
+## Ajoute une durée à une date, en ajustant pour les dépassements (par exemple, mois de février).
+
+```{r, include=TRUE, eval=TRUE, results='asis'}
+new_date = add_with_rollback(ymd("2023-01-31"), months(1))
+print(new_date)  # Affiche "2023-02-28" car février n'a que 28 jours en 2023
+```
+
+## Ajuste la date pour qu'elle tombe sur un dernier / premier jour du mois précédent
+
+```{r, include=TRUE, eval=TRUE, results='asis'}
+rollback_date = rollback(ymd("2023-03-15"), roll_to_first = TRUE)
+print(rollback_date)  # Affiche "2023-03-01"
+
+rollforward_data = rollforward(ymd("2023-03-15"), roll_to_first = TRUE)
+print(rollforward_data)  # Affiche "2023-04-01"
+```
+
+## Avance une date d'une durée spécifique (ex : +1 mois, +3 jours).
+
+```{r, include=TRUE, eval=TRUE, results='asis'}
+advanced_date = ymd("2023-04-07") + months(1) + days(3)
+print(advanced_date)  # Affiche "2023-05-10"
+```
+
+## Gestion des fuseaux horaires
+
+```{r, include=TRUE, eval=TRUE, results='asis'}
+# Création d'un datetime avec un fuseau horaire spécifique (UTC)
+datetime_utc <- ymd_hms("2023-04-07 14:30:00", tz = "UTC")
+print(datetime_utc)  # Affiche "2023-04-07 14:30:00 UTC"
+
+# Conversion vers un autre fuseau horaire (Europe/Paris)
+datetime_paris <- with_tz(datetime_utc, "Europe/Paris")
+print(datetime_paris)  # Affiche "2023-04-07 16:30:00 CEST" (+2h en été)
+
+# Ajout d'heures en conservant le fuseau horaire
+datetime_paris_plus_3h <- datetime_paris + hours(3)
+print(datetime_paris_plus_3h)  # Affiche "2023-04-07 19:30:00 CEST"
+
+# Conversion vers un troisième fuseau (New York)
+datetime_ny = with_tz(datetime_paris_plus_3h, "America/New_York")
+print(datetime_ny)  # Affiche "2023-04-07 13:30:00 EDT" (-6h depuis Paris)
+
+# Force un fuseau horaire sans conversion (changement d'affichage seulement)
+force_tz_exemple = force_tz(datetime_paris, "Asia/Tokyo")
+print(force_tz_exemple)  # Affiche "2023-04-07 16:30:00 JST" (même instant, tz différente)
+```
+
+## Modifie une ou plusieurs composantes de la date (ex : changer l'année ou le mois).
+
+```{r, include=TRUE, eval=TRUE, results='asis'}
+new_date_set = ymd("2023-04-07")
+year(new_date_set) = 2025
+month(new_date_set) = 12
+print(new_date_set)    # Affiche "2025-12-07"
+```
+
+## Arrondit une date à l'unité spécifiée (par exemple, au début du mois).
+                                                 
+```{r, include=TRUE, eval=TRUE, results='asis'}
+rounded_date_floor = floor_date(datetime_val, "month")
+print(rounded_date_floor)  # Affiche "2023-04-01"
+```
+
+## Arrondit une date à la fin de l'unité spécifiée (par exemple, à la fin de l'année).
+
+```{r, include=TRUE, eval=TRUE, results='asis'}
+rounded_date_ceiling = ceiling_date(datetime_val, "year")
+print(rounded_date_ceiling)  # Affiche "2024-01-01"
+```
+
+## Arrondit une date à l'unité spécifiée (par exemple, au jour le plus proche).
+
+```{r, include=TRUE, eval=TRUE, results='asis'}
+rounded_date_round = round_date(datetime_val, "day")
+print(rounded_date_round)  # Affiche "2023-04-07"
+```
+
+## Crée un objet de type "intervalle" entre deux dates.
+
+```{r, include=TRUE, eval=TRUE, results='asis'}
+start_date = ymd("2023-01-01")
+end_date = ymd("2023-04-07")
+date_interval = interval(start_date, end_date)
+print(date_interval)  # Affiche "2023-01-01 -- 2023-04-07"
+```
+
+## Calcule la différence entre deux dates ou heures.
+
+```{r, include=TRUE, eval=TRUE, results='asis'}
+time_diff = difftime(end_date, start_date, units = "days")
+print(time_diff)  # Affiche "96 days"
+```
+
+## Calcule la longueur d'un intervalle en unités spécifiées (ex : jours, mois, années).
+
+```{r, include=TRUE, eval=TRUE, results='asis'}
+
+length_in_days = time_length(date_interval,'year')
+print(length_in_days)  # Affiche "96"
+```
+
+## Calcule l'âge d'une personne à partir d'une date de naissance.
+
+```{r, include=TRUE, eval=TRUE, results='asis'}
+birth_date = ymd("1990-04-07")
+today_date = today()
+age = as.period(interval(birth_date, today_date))$year
+print(age)  # Affiche l'âge basé sur la date actuelle
+```
+
+## Crée une période spécifiée (ex : 3 mois, 1 jour).
+
+```{r, include=TRUE, eval=TRUE, results='asis'}
+period_value = period(3, "months")
+print(period_value)  # Affiche "3 months"
+```
+
+## Crée une durée, un nombre fixe de secondes.
+
+```{r, include=TRUE, eval=TRUE, results='asis'}
+duration_value = duration(3600)  # 3600 secondes = 1 heure
+print(duration_value)  # Affiche "1 hours"
+```
+
+## Formate une date en chaîne selon un format spécifique.
+
+```{r, include=TRUE, eval=TRUE, results='asis'}
+formatted_date = format(ymd("2023-04-07"), "%A, %d %B %Y")
+print(formatted_date)  # Affiche "Friday, 07 April 2023"
+```
+
+## Convertit une chaîne en date en fonction d'un format spécifié.
+
+```{r, include=TRUE, eval=TRUE, results='asis'}
+datetime_str = strptime("07-04-2023 14:30", "%d-%m-%Y %H:%M")
+print(datetime_str)  # Affiche "2023-04-07 14:30:00"
+```
+
+## Vérifie si un objet est une date.
+
+```{r, include=TRUE, eval=TRUE, results='asis'}
+date_check = is.Date(ymd("2023-04-07"))
+print(date_check)  # Affiche "TRUE"
+```
+
+## Vérifie si un objet est une période (ex : durée).
+
+```{r, include=TRUE, eval=TRUE, results='asis'}
+period_check = is.period(period(3, "months"))
+print(period_check)  # Affiche "TRUE"
+```
+
+
+
+
+
+

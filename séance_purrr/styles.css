@@ -1,0 +1,121 @@
+/* Page Setup */
+@page {
+  size: A4;
+  margin: 2cm;
+}
+
+/* Global body styles */
+body {
+  font-family: 'Verdana', sans-serif;  /* Plus moderne et lisible que Arial */
+  font-size: 12pt;
+  line-height: 1.5;
+  color: #333;
+  background-color: #ffffff;
+}
+
+/* Header styles */
+h1, h2, h3 {
+  color: #333;
+  font-family: 'Verdana', sans-serif;
+  font-weight: bold;
+  margin-top: 20px;
+  margin-bottom: 10px;
+}
+
+/* Code block styling for chunks only (no border around normal text) */
+pre {
+  background-color: #f0f0f0;  /* Gris clair pour le fond du code */
+  font-family: 'Consolas', 'Courier New', Courier, monospace;  /* Police monospace élégante */
+  font-size: 11pt;
+  padding: 8px;
+  line-height: 1.6;
+  overflow-x: auto;
+  border: 3px solid #000;  /* Bordure noire épaisse autour du code */
+  border-radius: 4px;
+}
+
+/* Comment styling */
+pre code {
+  color: #333; /* Texte de code en couleur standard */
+}
+
+/* Specific styling for comments in code */
+pre code span.comment {
+  color: #006400;  /* Vert foncé pour les commentaires */
+}
+
+/* No box or border around normal text */
+p, ul, ol, blockquote {
+  margin-bottom: 1em;
+  color: #333;
+  padding: 0;
+  border: none; /* Aucune bordure autour des paragraphes, listes, blockquotes */
+}
+
+/* Lists */
+ul, ol {
+  margin-left: 2em;
+}
+
+ul li, ol li {
+  font-size: 12pt;
+  line-height: 1.6;
+}
+
+/* Links */
+a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* Emphasis (italics) */
+em {
+  font-style: italic;
+  color: #555;
+}
+
+/* Strong (bold) */
+strong {
+  font-weight: bold;
+  color: #000;
+}
+
+/* Blockquote */
+blockquote {
+  font-style: italic;
+  border-left: 4px solid #ccc;
+  padding-left: 15px;
+  margin-left: 0;
+  color: #666;
+}
+
+/* Table styling */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1em;
+}
+
+table, th, td {
+  border: 1px solid #ccc;
+}
+
+th, td {
+  padding: 8px;
+  text-align: left;
+}
+
+th {
+  background-color: #f9f9f9;
+}
+
+/* Table code block style */
+table code {
+  background-color: #f9f9f9;
+  font-size: 10pt;
+  padding: 4px;
+}

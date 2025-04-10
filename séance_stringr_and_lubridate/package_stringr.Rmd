@@ -1,0 +1,422 @@
+---
+title: "Cours R - packages stringr"
+output: 
+  html_document:
+    css: "styles.css"
+date: "2025-04-10"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(stringr)
+```
+
+# Programmation avec le package **stringr**
+
+#### 1.Détection et recherche
+#### 2.Extraction et remplacement
+#### 3.Manipulation de texte
+#### 4.Manipulations avancées avec des regex
+#### 5.Fonctions utilitaires
+
+# Détection et recherche
+
+##  Exemple de `str_detect()`
+
+Description: Vérifie si un motif est présent dans une chaîne de caractères.
+
+```{r, include=TRUE, eval=TRUE, results='asis'}
+textes = c("Bonjour", "hello", "salut", "hi")
+result_detect = str_detect( textes, "ut" )
+print(result_detect)
+```
+
+##  Exemple de `str_count()`
+
+Description: Compte le nombre d'occurrences d'un motif dans une chaîne.
+
+```{r, include=TRUE, eval=TRUE, results='asis'}
+# Compte le nombre d'occurrences de 'l'
+result_count = str_count(textes, "l")
+print(result_count)
+```
+
+##  Exemple de `str_locate()`
+
+Description: Localise la première occurrence d'un motif dans une chaîne.
+
+```{r, include=TRUE, eval=TRUE, results='asis'}
+# Localise la première occurrence de 'o'
+result_locate = str_locate(textes, "o")
+print(result_locate)
+```
+
+##  Exemple de `str_locate_all()`
+
+Description: Localise toutes les occurrences d'un motif dans une chaîne.
+
+```{r, include=TRUE, eval=TRUE, results='asis'}
+# Localise toutes les occurrences de 'o'
+result_locate_all = str_locate_all(textes, "o")
+print(result_locate_all)
+```
+
+##  Exemple de `str_match()`
+
+Description: Extrait des groupes capturés par un motif regex.
+
+```{r, include=TRUE, eval=TRUE, results='asis'}
+emails = c("test@example.com", "contact@domain.org")
+# Extrait l'utilisateur et le domaine de l'email
+result_match = str_match(emails, "([a-z]+)@([a-z]+)\\.")
+print(as.matrix(result_match))
+```
+
+Colonne 1 : Tout ce qui a matché ("test@example.")
+
+Colonne 2 : Premier groupe de capture ("test")
+
+Colonne 3 : Deuxième groupe de capture ("example")
+
+##  Exemple de `str_match_all()`
+
+Description: Extrait tous les groupes capturés par un motif regex.
+
+```{r, include=TRUE, eval=TRUE, results='asis'}
+# Extrait tous les groupes capturés dans une chaîne
+emailsList = c("test@example.com", "contact@sub.domain.org", "admin@another.sub.domain.com")
+result_match_all = str_match_all(emailsList, "([a-z]+)@([a-z]+)((?:\\.[a-z]+)*)\\.")
+print(do.call(rbind,result_match_all))
+```
+
+Le pattern (?:\\.[a-z]+)* permet de capturer plusieurs niveaux de sous-domaines
+
+
+
+
+# Extraction et remplacement
+
+##  Exemple de `str_extract()`
+
+Description: Extrait la première occurrence d'un motif (regex).
+
+```{r, include=TRUE, eval=TRUE, results='asis'}
+# Extrait la première partie d'un email (avant '@')
+result_extract = str_extract(emails, "[a-z]+@")
+print(result_extract)
+```
+
+## Exemple de `str_extract_all()`
+
+Description: Extrait toutes les occurrences d'un motif (regex).
+
+```{r, include=TRUE, eval=TRUE, results='asis'}
+# Extrait toutes les occurrences d'un motif
+result_extract_all = str_extract_all(emails, "[a-z]+")
+print(result_extract_all)
+```
+
+## Exemple de `str_replace()`
+
+Description: Remplace la première occurrence d'un motif par un remplacement.
+
+```{r, include=TRUE, eval=TRUE, results='asis'}
+# Remplace le premier 'o' par 'X'
+result_replace = str_replace(textes, "o", "X")
+print(result_replace)
+```
+
+## Exemple de `str_replace_all()`
+
+```{r, include=TRUE, eval=TRUE, results='asis'}
+# Remplace tous les 'o' par 'X'
+result_replace_all = str_replace_all(textes, "o", "X")
+print(result_replace_all)
+```
+
+## Exemple de `str_sub()`
+
+Description: Extrait une sous-chaîne de caractères entre deux indices.
+
+```{r, include=TRUE, eval=TRUE, results='asis'}
+# Extrait les caractères de position 1 à 3
+result_sub = str_sub(textes, 1, 3)
+print(result_sub)
+```
+
+## Exemple de `str_trim()`
+
+Description: Supprime les espaces blancs en début et fin de chaîne.
+
+```{r, include=TRUE, eval=TRUE, results='asis'}
+# Texte avec espaces
+textes_espaces = c("  Bonjour  ", "  hello   ")
+# Supprime les espaces en début et fin
+result_trim = str_trim(textes_espaces)
+print(result_trim)
+```
+
+## Exemple de `str_pad()`
+
+Description: Remplit une chaîne de caractères à une longueur spécifiée.
+
+```{r, include=TRUE, eval=TRUE, results='asis'}
+# Remplir les chaînes pour atteindre une longueur de 10
+result_pad = str_pad(textes, width = 10, side = "both", pad = "-")
+print(result_pad)
+```
+
+## Exemple de `str_to_lower()`,`str_to_upper()`,`str_to_title()`,`str_to_sentence()`
+
+Description: Convertit une chaîne en majuscules, majuscules, titre, phrase
+
+```{r, include=TRUE, eval=TRUE, results='asis'}
+# Convertir en majuscules
+result_upper = str_to_upper(textes)
+print(result_upper)
+
+str_to_lower(c("HELLO", "WORLD"))
+str_to_upper(c("hello", "world"))
+str_to_title(c("hello world", "bonjour tout le monde"))
+str_to_sentence(c("hello. world", "bonjour. tout le monde"))
+```
+
+## Exemple de `str_to_lower()`
+
+Description: Convertit une chaîne en minuscules.
+
+```{r, include=TRUE, eval=TRUE, results='asis'}
+# Convertir en minuscules
+result_lower = str_to_lower(textes)
+print(result_lower)
+```
+
+# Manipulation de texte
+
+## Exemple de `str_c()`
+
+Description: Concatène des chaînes de caractères (équivalent de paste()).
+
+```{r, include=TRUE, eval=TRUE, results='asis'}
+# Concaténer les chaînes avec un séparateur
+result_concat = str_c(textes, "!", sep = "")
+print(result_concat)
+```
+
+## Exemple de `str_flatten()`
+
+Description: Fusionne un vecteur de chaînes de caractères en une seule chaîne.
+
+```{r, include=TRUE, eval=TRUE, results='asis'}
+# Fusionner le vecteur en une seule chaîne
+result_flatten = str_flatten(textes, collapse = "-")
+print(result_flatten)
+```
+
+## Exemple de `str_split()`
+
+Description: Divise une chaîne en un vecteur selon un séparateur.
+
+```{r, include=TRUE, eval=TRUE, results='asis'}
+# Diviser une phrase selon un tiret
+phrases = c("Bonjour@le-monde", "hello@world")
+result_split = str_split(phrases, "@")
+print(result_split)
+```
+
+## Exemple de `str_split_fixed()`
+
+Description: Divise une chaîne en un nombre fixe de parties.
+
+```{r, include=TRUE, eval=TRUE, results='asis'}
+# Diviser en 2 parties
+result_split_fixed = str_split_fixed("Bonjour@le--monde", "-", 2)
+print(result_split_fixed)
+```
+
+## Exemple de `str_split()`
+
+Description: Divise une chaîne en un nombre spécifié de parties.
+
+```{r, include=TRUE, eval=TRUE, results='asis'}
+# Diviser en 3 parties
+result_split_n = str_split("Bonjour-le-monde", "-", n = 3)
+print(result_split_n)
+```
+
+## Exemple de `str_replace_na()`
+
+Description: Remplace les valeurs NA par une chaîne spécifique.
+
+```{r, include=TRUE, eval=TRUE, results='asis'}
+# Vecteur avec une valeur NA
+textes_na = c("Bonjour", NA, "salut", NA)
+# Remplacer les NA par "Inconnu"
+result_replace_na = str_replace_na(textes_na, "Inconnu")
+print(result_replace_na)
+```
+
+# Manipulations avancées avec des regex
+
+## Exemple de `str_view()`
+
+Description: Affiche visuellement une chaîne et les correspondances regex dans un environnement interactif (généralement utilisé avec RStudio).
+
+```{r, include=TRUE, eval=TRUE, results='asis'}
+# Affiche visuellement les correspondances pour le motif regex
+str_view(emails, "[a-z]+@")
+```
+
+## Exemple de `str_view_all()`
+
+Description: Affiche toutes les correspondances d'une expression régulière dans une chaîne.
+
+```{r, include=TRUE, eval=TRUE, results='asis'}
+# Afficher toutes les correspondances pour les domaines d'email
+str_view_all(emails, "[a-z]+\\.")
+```
+
+# Fonctions utilitaires
+
+## Exemple de `str_length()`
+
+Description: Renvoie la longueur d'une chaîne de caractères.
+
+```{r, include=TRUE, eval=TRUE, results='asis'}
+# Longueur des chaînes
+result_length = str_length(textes)
+print(result_length)
+```
+
+## Exemple de `str_remove()`
+
+Description: Supprime la première occurrence d’un motif regex dans une chaîne.
+
+```{r, include=TRUE, eval=TRUE, results='asis'}
+# Supprimer la première occurrence de 'o'
+result_remove = str_remove(textes, "o")
+print(result_remove)
+```
+
+## Exemple de `str_remove_all()`
+
+Description: Supprime toutes les occurrences d’un motif regex dans une chaîne.
+
+```{r, include=TRUE, eval=TRUE, results='asis'}
+# Supprimer toutes les occurrences de 'o'
+result_remove_all = str_remove_all(textes, "o")
+print(result_remove_all)
+```
+
+## Exemple de `str_subset()`
+
+Description: Retourne un sous-ensemble des chaînes qui correspondent à un motif.
+
+```{r, include=TRUE, eval=TRUE, results='asis'}
+# Retourner les chaînes qui contiennent 'o'
+result_subset = str_subset(textes, "o")
+print(result_subset)
+```
+
+## Exemple de `str_dup()`
+
+Description: Duplique les chaînes de caractères un certain nombre de fois.
+
+```{r, include=TRUE, eval=TRUE, results='asis'}
+# Dupliquer chaque chaîne 3 fois
+result_dup = str_dup(textes, 3)
+print(result_dup)
+```
+
+## Exemple de `str_pad()`
+
+Description: Complète une chaîne de caractères à gauche, à droite ou des deux côtés.
+
+```{r, include=TRUE, eval=TRUE, results='asis'}
+# Compléter chaque chaîne pour atteindre une longueur de 12 caractères
+result_pad = str_pad(textes, 12, side = "both", pad = "*")
+print(result_pad)
+```
+
+## Exemple de `str_sort()`
+
+Description: Trie un vecteur de chaînes de caractères.
+
+```{r, include=TRUE, eval=TRUE, results='asis'}
+# Trier les chaînes par ordre alphabétique
+result_sort = str_sort(textes)
+print(result_sort)
+```
+
+## Exemple de `str_subset()`
+
+Description: Retourne les éléments d'un vecteur qui correspondent à un motif.
+
+```{r, include=TRUE, eval=TRUE, results='asis'}
+# Subset des textes contenant "o"
+result_subset = str_subset(textes, "o")
+print(result_subset)
+```
+
+## Exemple de `str_dup()` 
+
+Description: Cette fonction permet de dupliquer une chaîne un nombre spécifié de fois.
+
+```{r, include=TRUE, eval=TRUE, results='asis'}
+# Dupliquer chaque chaîne dans le vecteur 'textes' 3 fois
+textes = c("Bonjour", "hello", "salut", "hi")
+result_dup = str_dup(textes, 3)
+print(result_dup)
+```
+
+## Exemple de `str_pad()` 
+
+Description: Cette fonction permet de remplir une chaîne de caractères afin d'atteindre une longueur spécifiée. Vous pouvez spécifier le côté où vous souhaitez ajouter des caractères et le caractère de remplissage.
+
+```{r, include=TRUE, eval=TRUE, results='asis'}
+# Compléter chaque chaîne pour atteindre une longueur de 12 caractères
+textes = c("Bonjour", "hello", "salut", "hi")
+result_pad_both = str_pad(textes, 12, side = "both", pad = "*")
+print(result_pad_both)
+```
+
+```{r, include=TRUE, eval=TRUE, results='asis'}
+# Compléter chaque chaîne pour atteindre une longueur de 10 caractères (remplissage à gauche)
+result_pad_left = str_pad(textes, 10, side = "left", pad = "#")
+print(result_pad_left)
+```
+
+```{r, include=TRUE, eval=TRUE, results='asis'}
+# Compléter chaque chaîne pour atteindre une longueur de 10 caractères (remplissage à droite)
+result_pad_right = str_pad(textes, 10, side = "right", pad = "_")
+print(result_pad_right)
+```
+
+## Exemple de `str_sort()` 
+
+Description: Cette fonction permet de trier un vecteur de chaînes de caractères en ordre alphabétique.
+
+```{r, include=TRUE, eval=TRUE, results='asis'}
+# Trier le vecteur de chaînes de caractères
+textes = c("Bonjour", "hello", "salut", "hi")
+result_sort = str_sort(textes)
+print(result_sort)
+```
+
+## Exemple de `str_which()` 
+
+Description: Cette fonction renvoie les indices des éléments qui correspondent à un motif donné.
+
+```{r, include=TRUE, eval=TRUE, results='asis'}
+# Trouver les indices des chaînes contenant 'o'
+textes = c("Bonjour", "hello", "salut", "hi")
+result_which = str_which(textes, "o")
+print(result_which)
+```
+
+```{r, include=TRUE, eval=TRUE, results='asis'}
+# Trouver les indices des chaînes contenant "e"
+result_which_e = str_which(textes, "e")
+print(result_which_e)
+```
+

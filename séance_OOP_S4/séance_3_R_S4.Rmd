@@ -1,0 +1,464 @@
+---
+title: "**Programmation objet en R**"
+output: html_document
+date: "13 Mars 2025"
+---
+
+<style>
+  /* Corps du texte principal */
+  body {
+    font-family: "Adobe Caslon Pro", serif;
+    font-size: 16px; /* Taille du texte principal */
+    line-height: 1.6; /* Espacement pour faciliter la lecture */
+    color: #000000; /* Texte principal en noir */
+  }
+
+  /* Titres principaux */
+  h1 {
+    font-size: 28px; /* Taille du titre principal */
+    font-weight: bold;
+    color: #000000; /* Titres en noir */
+  }
+
+  /* Sous-titres */
+  h2 {
+    font-size: 22px; /* Taille des sous-titres */
+    font-weight: bold;
+    color: #000000; /* Sous-titres en noir */
+  }
+
+  /* Sous-sous-titres */
+  h3 {
+    font-size: 18px; /* Taille des sous-sous-titres */
+    font-weight: bold;
+    color: #000000; /* Sous-sous-titres en noir */
+  }
+
+  /* Textes en citation ou exemples */
+  blockquote {
+    font-size: 16px;
+    font-style: italic;
+    color: #000000; /* Citations en noir */
+    border-left: 3px solid #ccc;
+    padding-left: 10px;
+    margin-left: 20px;
+  }
+
+  /* Listes */
+  ul, ol {
+    font-size: 16px;
+    line-height: 1.5;
+    color: #000000; /* Listes en noir */
+  }
+
+  /* Liens */
+  a {
+    color: #000000; /* Liens en noir */
+    text-decoration: none;
+  }
+
+  /* Surligner des éléments importants */
+  .important {
+    font-weight: bold;
+    color: #000000; /* Surlignage en noir */
+  }
+  
+pre, code {
+  font-family: "Courier New", monospace;
+  font-size: 14px;
+  background-color: #f5f5f5; /* Fond clair */
+  color: #333333; /* Texte de base */
+  padding: 10px;
+  border-radius: 5px;
+  overflow-x: auto;
+  white-space: pre-wrap;
+}
+
+</style>
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(purrr)
+library(devtools)
+```
+
+# 1. **Introduction**
+
+La Programmation Orientée Objet (POO)  est un **paradigme de programmation** basé sur la notion d’**objets**, qui sont des entités regroupant à la fois des **données** et des **comportements**. 
+
+Contrairement à la programmation procédurale, où le code est structuré autour de fonctions et de flux d’exécution, organise le code de manière modulaire, représentant des entités du monde réel.
+
+En **R**, qui est principalement utilisé pour l’analyse de données et la statistique, la POO 
+joue un rôle essentiel lorsqu’il s’agit de manipuler des objets complexes tels que des modèles statistiques, des graphiques ou des structures de données avancées. 
+
+Le système **S4** de **R**, permet une meilleure gestion des objets en définissant clairement leurs caractéristiques et leurs relations.
+
+Dans les sections suivantes, nous explorerons les concepts clés de la POO en **R** **S4**, avec des exemples concrets pour illustrer leur importance et leur mise en œuvre.
+
+## **Classe, Objet, Attributs, Méthodes et rôle des Slots**
+
+Les concepts de **classe**, **objet**, **attributs**, **méthodes** et **slots** offrent la possibilité de modéliser des entités spécifiques au domaine d'application et de gérer leur état et leurs comportements dans le programme, permettant ainsi de structurer le code de manière modulaire.
+
+### **Classe**
+
+Une **classe** est une structure de programmation qui définit un **type** d'**objet**. Elle spécifie les **attributs** (ou **slots**) et les **méthodes** associés à un type d'objet. 
+
+- **attributs** : Ce sont les propriétés d'un objet, comme la couleur d'une voiture, le nom d'une personne, ou la vitesse d'un véhicule.
+
+- **méthodes** : Ce sont les fonctions qui définissent les comportements associés à un **objet**. Elles permettent d'interagir avec les **attributs** de l'**objet** et de modifier son état ou de lui faire effectuer des actions.
+
+Une **classe** spécifie les **propriétés** et les **comportements** que les objets créés à partir de cette classe doivent avoir.
+
+Voici un exemple de la classe **Voiture** qui définit 6 attributs :
+
+```{r}
+setClass(
+  "Voiture",  # Nom de la classe
+  slots = list(  # Attributs (ou slots)
+    marque = "character",  # Slot 'marque' de type caractère
+    couleur = "character",  # Slot 'couleur' de type caractère
+    kilometrage = "numeric",  # Slot 'kilometrage' de type numérique
+    en_marche = "logical",  # Slot 'en_marche' de type logique
+    vitesse = "numeric",  # Slot 'vitesse' de type numérique (km/h)
+    temps_0_100 = "numeric"  # Slot 'temps_0_100' de type numérique (secondes)
+  )
+)
+```
+
+### **Objet**
+
+Un objet est une **instance** d'une classe, c'est-à-dire est une réalisation concrète de la classe, avec des valeurs spécifiques pour ses attributs.
+
+une **classe** définit un **modèle général**, tandis qu'un **objet** est une **entité spécifique** créée à partir de ce modèle.
+
+L'objet possède des **attributs** (ou **slots**) et des **méthodes** qui définissent ses caractéristiques et ses comportements.
+
+Voici comment créer un objet spécifique à partir de la classe Voiture :
+
+```{r}
+ma_voiture = new("Voiture", 
+                 marque = "Donkervoort", 
+                 couleur = "Rouge", 
+                 kilometrage = 0, 
+                 en_marche = FALSE, 
+                 vitesse = 0, 
+                 temps_0_100 = 2.5)
+```
+
+### **Attributs**
+
+Les **attributs** (ou **slots**) sont des propriétés qui définissent l'état d'un objet. 
+
+Chaque objet d'une même classe peut avoir des valeurs différentes pour ces attributs qui définissent l'état de l'objet à un moment donné.
+
+Les **slots** permettent de garantir que chaque attribut respecte un type de données spécifique, ce qui aide à éviter les erreurs de type.
+
+### **Méthodes**
+
+Les méthodes sont des fonctions associées à la **classe** qui définissent les actions qu'un objet peut exécuter.
+
+Elles interagissent avec les attributs de l'objet et modifient son état ou accomplissent des actions spécifiques.
+
+Voici un exemple avec la méthode *temps_0_100()* appliquée à un objet Voiture. Cette méthode affiche le temps qu'une voiture met pour passer de 0 à 100 km/h, en fonction de l'attribut **temps_0_100** défini dans la classe Voiture.
+
+```{r}
+# Définition du generic
+setGeneric("temps_0_100", function(object) standardGeneric("temps_0_100"))
+
+# Définition de la méthode pour la classe "Voiture"
+setMethod(
+  "temps_0_100",
+  "Voiture",  # Type d'objet sur lequel la méthode s'applique
+  function(object) {  # Remplacer 'x' par 'object'
+    # Vérification de la validité du temps (doit être positif)
+    if (object@temps_0_100 <= 0) {
+      stop("Le temps de 0 à 100 km/h doit être un nombre positif.")
+    }
+    
+    # Affichage du temps de 0 à 100 km/h
+    cat("La voiture", object@marque, "met", object@temps_0_100, "secondes pour passer de 0 à 100 km/h.\n")
+    
+    # Retourner le temps pour d'éventuelles utilisations futures
+    return(object@temps_0_100)
+  }
+)
+```
+
+Utilisation de la méthode *temps_0_100()* :
+
+```{r}
+temps = temps_0_100(ma_voiture)
+```
+
+## **Slots**
+
+En **R**, les **slots** sont utilisés pour stocker les **attributs** d'un objet. Chaque **slot** déclare un **attribut spécifique** avec un type de données défini, par exemple, "character", "numeric", etc.
+
+Les **slots** assurent l'**encapsulation des données** en contrôlant le type et la structure des informations qu'un objet peut contenir. 
+
+Les **slots** renforcent la robustesse du code en imposant des règles strictes sur les types de données qu'un objet peut contenir.Lorsqu'une **classe** est définie en **S4**, chaque **attribut** est spécifié avec un type, ce qui assure que seules des données appropriées sont assignées à chaque slot, maintenant ainsi l'intégrité des données et réduisant les risques d'erreurs dans le programme.
+
+Un exemple avec la classe Voiture de création d'un objet avec un mauvais type de données pour **'temps_0_100'**:
+
+```{r,echo=TRUE, eval=FALSE}
+voiture = new("Voiture", 
+              marque = "Lotus", 
+              couleur = "Noir", 
+              kilometrage = 0, 
+              en_marche = FALSE, 
+              vitesse = 0, 
+              temps_0_100 = "rapide")  # Erreur: doit être numérique
+```
+
+### **Résumé**
+
+- **Classe** : Un modèle qui définit les attributs et les comportements des objets.
+
+- **Objet** : Une instance concrète d'une classe, avec des valeurs spécifiques pour ses attributs.
+
+- **Attributs** ( ou **Slots**) : Les propriétés de l'objet, stockées dans des slots et associées à des types de données spécifiques.
+
+- **Méthodes** : Des fonctions qui définissent les comportements des objets et qui interagissent avec leurs attributs.
+
+- **Slots** : Les conteneurs qui stockent les attributs d'un objet dans le système S4, garantissant la validité des données et renforçant la robustesse du code.
+
+## **Héritage, Composition, Polymorphisme et Encapsulation**
+
+Ces quatre concepts sont des piliers de la Programmation Orientée Objet. Chacun joue un rôle distinct dans la conception de systèmes logiciels robustes et flexibles. 
+
+### **Héritage**
+
+L'héritage permet de créer une classe enfant (ou sous-classe) à partir d'une classe parent (ou superclasse). La classe enfant hérite des **attributs** (**slots**) et des **méthodes** de la classe parent, tout en pouvant ajouter ou redéfinir des fonctionnalités.
+
+#### Exemple 
+
+```{r}
+# Définir la classe mère : Voiture
+setClass("Voiture",
+         slots = list(
+           marque = "character",
+           modele = "character",
+           annee = "numeric"
+         ))
+
+# Définir la classe fille : VoitureElectrique (hérite de Voiture)
+setClass("VoitureElectrique",
+         slots = list(
+           autonomie = "numeric"  # Nouveau slot spécifique à VoitureElectrique
+         ),
+         contains = "Voiture")  # Héritage de la classe Voiture
+
+# Créer un objet VoitureElectrique
+tesla = new("VoitureElectrique", marque = "Tesla", modele = "Model 3", annee = 2022, autonomie = 350)
+
+# Accéder aux slots hérités
+cat("Marque:", tesla@marque, "\n")
+cat("Modèle:", tesla@modele, "\n")
+cat("Année:", tesla@annee, "\n")
+cat("Autonomie:", tesla@autonomie, "km\n")
+```
+
+### **Composition**
+
+La composition consiste à inclure un objet d'une classe dans une autre classe. Cela permet de construire des objets complexes en combinant des objets plus simples.
+
+#### Exemple 
+
+```{r}
+# Définir la classe Garage
+library(purrr)
+
+# Définir la classe Garage
+setClass("Garage",
+         slots = list(
+           id = "character",
+           voitures = "list"  # Liste de voitures
+         ))
+
+# Créer des objets voiture
+voiture = new("Voiture", marque = "Toyota", modele = "Corolla", annee = 2020)
+tesla = new("VoitureElectrique", marque = "Tesla", modele = "Model 3", annee = 2022, autonomie = 350)
+
+# Créer un garage avec des voitures
+garage = new("Garage", id = "Garage 1", voitures = list(voiture, tesla))
+
+# Accéder au garage avec pluck
+cat("Garage ID:", pluck(garage, "id"), "\n")
+
+# Utilisation de pluck pour accéder aux modèles des voitures sans @
+cat("Premier véhicule dans le garage:", slot(pluck(garage, "voitures")[[1]], "modele"), "\n")
+cat("Deuxième véhicule dans le garage:", slot(pluck(garage, "voitures")[[2]], "modele"), "\n")
+
+# Utilisation de walk pour afficher les modèles de chaque voiture dans le garage sans @
+cat("Affichage des modèles de toutes les voitures dans le garage:\n")
+walk(pluck(garage, "voitures"), ~cat(slot(.x, "modele"), "\n"))
+
+```
+
+**Différence avec la Composition**
+
+- Héritage : Une relation "est-un", ex. une VoitureElectrique est une Voiture.
+
+- Composition : Une relation "a-un", ex. un Garage a des Voiture.
+
+### **Polymorphisme**
+
+Le polymorphisme permet à une méthode d'avoir plusieurs comportements selon la classe de l'objet qui l'appelle.
+
+#### Exemple 
+
+```{r}
+# Définir une méthode générique : démarrer
+setGeneric("demarrer", function(object) standardGeneric("demarrer"))
+
+# Implémenter la méthode pour Voiture
+setMethod("demarrer", signature(object = "Voiture"),
+          function(object) {
+            cat(object@modele, "démarre avec un moteur à combustion.\n")
+          })
+
+# Implémenter la méthode pour VoitureElectrique
+setMethod("demarrer", signature(object = "VoitureElectrique"),
+          function(object) {
+            cat(object@modele, "démarre avec une batterie électrique.\n")
+          })
+
+# Utilisation de la méthode
+demarrer(voiture)  # Affiche "Model 3 démarre avec une batterie électrique."
+demarrer(tesla) 
+```
+
+### **Encapsulation et Accesseurs (Getters et Setters)**
+
+L'encapsulation consiste à cacher les détails internes d'un objet et à exposer uniquement une interface publique. Cela se fait via des méthodes appelées accesseurs :
+
+- **Getter** : Permet de récupérer la valeur d'un slot.
+- **Setter** : Permet de modifier la valeur d'un slot de manière contrôlée.
+
+Les getters et setters sont des méthodes importantes dans la programmation orientée objet, permettant de contrôler l'accès aux attributs d'un objet tout en appliquant des validations ou des transformations.
+
+Les getters permettent d'exposer de manière sécurisée les attributs privés d'un objet, tandis que les setters permettent de contrôler comment ces attributs sont modifiés. Par exemple, on peut ajouter une validation pour s'assurer que la valeur assignée respecte certaines contraintes.
+
+#### Exemple Comparatif : Intérêt des Getters et Setters
+
+Sans getter et setter :
+
+```{r, eval=FALSE}
+voiture = new("Voiture", marque = "AC Cobra", modele = "260", annee = 1974)
+voiture@modele = 123  # Mauvaise affectation, pas de contrôle de type
+cat("Modèle incorrect:", voiture@modele, "\n")
+```
+
+Avec getter et setter :
+
+```{r}
+# Définir le getter pour le modèle
+setGeneric("getModele", function(object) standardGeneric("getModele"))
+setMethod("getModele", signature(object = "Voiture"),
+          function(object) {
+            return(object@modele)
+          })
+
+# Définir le setter pour le modèle avec vérification de type
+setGeneric("setModele", function(object, value) standardGeneric("setModele"))
+setMethod("setModele", signature(object = "Voiture", value = "character"),
+          function(object, value) {
+            # Vérifier que la valeur est une chaîne de caractères
+            if (!is.character(value)) {
+              stop("Le modèle doit être une chaîne de caractères!")
+            }
+            # Affecter la valeur au slot
+            object@modele = value
+            return(object)
+          })
+
+# Définir une méthode générique pour capturer les erreurs
+#  value = "ANY" ie toute autre valeur que celle définit dans le slot value
+setMethod("setModele", signature(object = "Voiture", value = "ANY"),
+          function(object, value) {
+            stop("Erreur : le modèle doit être une chaîne de caractères.")
+          })
+
+# Créer une instance de Voiture
+voiture = new("Voiture", marque = "AC Cobra", modele = "260", annee = 2020)
+
+# Tester le setter avec une valeur correcte
+voiture = setModele(voiture, "427")
+cat("Modèle après changement : ", getModele(voiture), "\n")
+
+# Tester le setter avec une valeur incorrecte (pas une chaîne de caractères)
+tryCatch({
+  voiture = setModele(voiture, 427)  # Cela générera une erreur, car le modèle n'est pas une chaîne de caractères
+}, error = function(e) {
+  cat("Erreur capturée :", e$message, "\n")
+})
+
+# Tester à nouveau avec une valeur correcte
+voiture = setModele(voiture, "500")
+cat("Modèle après changement : ", getModele(voiture), "\n")
+
+```
+
+### **Diagramme des Classes UML** (*Unified Modeling Language*)
+
+Un diagramme de classes UML est une représentation visuelle des classes et de leurs relations. Il comprend :
+
+- **Les classes** : Chaque classe est représentée par une boîte divisée en trois parties : le nom de la classe en haut, les attributs (ou slots) au milieu, et les méthodes au bas.
+
+- **L'héritage** : Représente une relation "est-un" entre la classe enfant et la classe parente. 
+La flèche vide pointe de la classe enfant vers la classe parent. 
+
+- **La composition** : Représente une relation "a-un" entre les objets. Le losange plein au bout de la flèche indique que la classe contenant un autre objet en est responsable.
+
+- **Les associations** : Représente une relation entre deux classes, où l'une peut utiliser l'autre sans en être responsable.
+
+#### Diagramme UML des classes en R S4
+
+```{r, echo=FALSE, out.width='100%'}
+library(DiagrammeR)
+
+grViz("
+  digraph UML_ClassDiagram {
+    graph [rankdir = TB]
+
+    # Définition des classes
+    Voiture [shape=box label='Voiture\n------------\n+ marque: character\n+ modele: character\n+ annee: numeric\n+ vitesse_max: numeric\n------------\n+ demarrer()\n+ afficher_details()']
+    VoitureElectrique [shape=box label='VoitureElectrique\n------------\n+ autonomie: numeric\n------------\n+ demarrer()']
+    VoitureSportive [shape=box label='VoitureSportive\n------------\n+ turbo: logical\n------------\n+ demarrer()\n+ afficher_details()']
+    Garage [shape=box label='Garage\n------------\n+ id: character\n+ voitures: list\n------------\n+ ajouterVoiture()\n+ afficherVoitures()']
+    Conducteur [shape=box label='Conducteur\n------------\n+ nom: character\n+ age: numeric\n------------\n+ conduire()']
+
+    # Relations
+    VoitureElectrique -> Voiture [arrowhead=empty]  # Héritage de Voiture
+    VoitureSportive -> Voiture [arrowhead=empty]  # Héritage de Voiture
+    Garage -> Voiture [arrowhead=diamond label='contient' ]  # Composition
+    Conducteur -> Voiture [arrowhead=vee label='conduit'  ]  # Association
+  }
+")
+
+```
+
+## **Conclusion**
+
+- **Héritage** : Pour les relations "est-un".
+
+- **Composition** : Pour les relations "a-un".
+
+- **Polymorphisme** : Pour adapter le comportement des méthodes.
+
+- **Encapsulation** : Pour protéger les données et exposer une interface claire grâce aux getters et setters, garantissant une manipulation sécurisée des objets.
+
+- **Diagramme des classes** : Fournit une vision claire de la structure et des relations entre les classes du système.
+
+L’intérêt principal de la Programmation Orientée Objet réside dans sa capacité à faciliter la conception, la maintenance et la réutilisation du code. Grâce à des concepts comme **l’héritage**, **la composition**, **le polymorphisme** et **l’encapsulation**, la POO permet de structurer des applications complexes de manière plus claire et évolutive.
+
+**Modularité** : Le code est divisé en objets indépendants, facilitant son organisation et sa compréhension.
+
+**Réutilisabilité** : Les classes peuvent être réutilisées dans différents contextes, réduisant ainsi le temps de développement.
+
+**Extensibilité** : L’ajout de nouvelles fonctionnalités devient plus aisé grâce à l’héritage et au polymorphisme.
+
+**Maintenance simplifiée** : Les modifications sont plus faciles à gérer, car elles sont localisées dans des classes spécifiques
+
+# 2. **Comment déposer un package sur le CRAN: exemple avec PFIM**
