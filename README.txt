@@ -2,7 +2,7 @@
 PROGRAMME DE 2025
 ============================================
 
-** Séance package PFIM : pas dans les dossier, allez voir plutôt https://github.com/iame-researchCenter/PFIM
+** Séance package PFIM : pas dans les dossiers, allez voir plutôt https://github.com/iame-researchCenter/PFIM
 
 ** Séance programmation fonctionnelle avec "purrr" 
 
